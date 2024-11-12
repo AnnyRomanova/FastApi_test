@@ -2,6 +2,7 @@ from src.app import app, users
 from fastapi.testclient import TestClient
 
 
+# эмулято http-запросов
 # позволяет делать запросы к API напрямую
 client = TestClient(app)
 

@@ -25,7 +25,7 @@ class PostCreate(BaseModel):
     author_id: int
 
 
-class PostChange(BaseModel):
+class PostUpdate(BaseModel):
     title: str
     body: str
 
@@ -65,7 +65,7 @@ async def get_post(id: int) -> Post:
 
 
 # добавление нового поста
-@app.post("/post/add")
+@app.post("/post/add", status_code=201)
 async def add_post(post: PostCreate) -> Post:
     # поиск автора до первого совпадения id
     author = next((user for user in users if user["id"] == post.author_id), None)
@@ -82,14 +82,14 @@ async def add_post(post: PostCreate) -> Post:
 
 
 # изменение поста по заданному id
-@app.put("/post/change/{id}")
-async def change_post(post: PostChange, id: int) -> Post:
+@app.put("/post/update/{id}")
+async def update_post(post: PostUpdate, id: int) -> Post:
     for el in posts:
         if el["id"] == id:
             # создаем новый пост и перезаписываем его в списке
-            changed_post = {"id": id, "title": post.title, "body": post.body, "author": el["author"]}
-            posts[posts.index(el)] = changed_post
-            return Post(**changed_post)
+            updated_post = {"id": id, "title": post.title, "body": post.body, "author": el["author"]}
+            posts[posts.index(el)] = updated_post
+            return Post(**updated_post)
     raise HTTPException(status_code=404, detail="Post not found")
 
 
