@@ -1,5 +1,5 @@
 # FastApi - Учебный проект
 
 ## Установка:
-`pip install -r requirements.txt`
+`pip install -r my_requirements.txt`
 
