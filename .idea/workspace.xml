@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b08eed2-a73f-4726-8853-514514a44333" name="Changes" comment="added file README.md">
-      <change afterPath="$PROJECT_DIR$/tests/test_add_post.py" afterDir="false" />
+    <list default="true" id="1b08eed2-a73f-4726-8853-514514a44333" name="Changes" comment="added tests">
+      <change afterPath="$PROJECT_DIR$/src/logging.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_create_post.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_get_posts_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_get_posts_list.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,34 +47,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests for test_change_post.test_change_post_200.executor": "Run",
-    "Python tests.Python tests for test_create_post.test_create_post_201.executor": "Run",
-    "Python tests.Python tests for test_create_post.test_create_post_404.executor": "Run",
-    "Python tests.Python tests for test_delete_post.test_delete_post_200.executor": "Run",
-    "Python tests.Python tests for test_delete_post.test_delete_post_404.executor": "Run",
-    "Python tests.Python tests for test_get_post_for_id.test_post_for_id_200.executor": "Run",
-    "Python tests.Python tests for test_get_post_for_id.test_post_for_id_404.executor": "Run",
-    "Python tests.Python tests for test_get_posts_list.test_get_posts.executor": "Run",
-    "Python tests.Python tests in test_get_post_for_id.py.executor": "Run",
-    "Python tests.pytest in tests.executor": "Run",
-    "Python.main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/annar/PythonProjects/FastApi_test"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests for test_change_post.test_change_post_200.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_create_post.test_create_post_201.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_create_post.test_create_post_404.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_delete_post.test_delete_post_200.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_delete_post.test_delete_post_404.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_get_post_for_id.test_post_for_id_200.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_get_post_for_id.test_post_for_id_404.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_get_posts_list.test_get_posts.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_get_post_for_id.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest in tests.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/annar/PythonProjects/FastApi_test&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\annar\PythonProjects\FastApi_test\tests" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\annar\PythonProjects\FastApi_test" />
+      <recent name="C:\Users\annar\PythonProjects\FastApi_test\src\schemas" />
       <recent name="C:\Users\annar\PythonProjects\FastApi_test\src" />
+      <recent name="C:\Users\annar\PythonProjects\FastApi_test" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_delete_post.test_delete_post_404">
+  <component name="RunManager" selected="Python.app">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="FastApi_test" />
       <option name="ENV_FILES" value="" />

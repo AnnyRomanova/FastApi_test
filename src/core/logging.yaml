@@ -1,0 +1,24 @@
+version: 1
+formatters:
+  default:
+    format: "[%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)d] - %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: default
+loggers:
+  uvicorn:
+    level: INFO
+  uvicorn.error:
+    level: ERROR
+  uvicorn.access:
+    level: INFO
+    handlers: [console]
+  __main__:
+    level: DEBUG
+    handlers: [console]
+    propagate: false
+root:
+  level: DEBUG
+  handlers: [console]

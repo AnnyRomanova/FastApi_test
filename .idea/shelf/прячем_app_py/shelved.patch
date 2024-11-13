@@ -1,0 +1,36 @@
+Index: src/app.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import uvicorn\r\nfrom fastapi import FastAPI, HTTPException\r\nfrom pydantic import BaseModel\r\nfrom typing import List\r\n\r\napp = FastAPI()\r\n\r\n\r\nclass User(BaseModel):\r\n    id: int\r\n    name: str\r\n    age: int\r\n\r\n\r\nclass Post(BaseModel):\r\n    id: int\r\n    title: str\r\n    body: str\r\n    author: User\r\n\r\n\r\nclass PostCreate(BaseModel):\r\n    title: str\r\n    body: str\r\n    author_id: int\r\n\r\n\r\nclass PostUpdate(BaseModel):\r\n    title: str\r\n    body: str\r\n\r\n\r\nusers = [\r\n    {\"id\": 1, \"name\": \"Anna\", \"age\": 28},\r\n    {\"id\": 2, \"name\": \"Pavel\", \"age\": 63},\r\n    {\"id\": 3, \"name\": \"Ivan\", \"age\": 44}\r\n]\r\n\r\n\r\nposts = [\r\n    {\"id\": 1, \"title\": \"title_1\", \"body\": \"body_1\", \"author\": users[1]},\r\n    {\"id\": 2, \"title\": \"title_2\", \"body\": \"body_2\", \"author\": users[0]},\r\n    {\"id\": 3, \"title\": \"title_3\", \"body\": \"body_3\", \"author\": users[2]}\r\n]\r\n\r\n\r\n# выводит список постов\r\n@app.get(\"/posts\", response_model=List[Post])\r\ndef get_posts() -> List[Post]:\r\n    post_objects = []\r\n    for post in posts:\r\n        # каждый элемент в списке точно соответствует структуре класса Post\r\n        post_objects.append(Post(id=post[\"id\"], title=post[\"title\"], body=post[\"body\"], author=post[\"author\"]))\r\n    return post_objects\r\n\r\n\r\n# Поиск поста с заданным id\r\n@app.get(\"/posts/{id}\")\r\nasync def get_post(id: int) -> Post:\r\n    for post in posts:\r\n        if post[\"id\"] == id:\r\n            # конвертируем пост в объект Post\r\n            return Post(**post)\r\n    raise HTTPException(status_code=404, detail=\"Post not found\")\r\n\r\n\r\n# добавление нового поста\r\n@app.post(\"/post/add\", status_code=201)\r\nasync def add_post(post: PostCreate) -> Post:\r\n    # поиск автора до первого совпадения id\r\n    author = next((user for user in users if user[\"id\"] == post.author_id), None)\r\n    # если автор не найден, вызываем ошибку\r\n    if not author:\r\n        raise HTTPException(status_code=404, detail=\"User not found\")\r\n    # если автор найден, создаем новый пост\r\n    new_post_id = len(posts) + 1\r\n\r\n    new_post = {\"id\": new_post_id, \"title\": post.title, \"body\": post.body, \"author\": author}\r\n    posts.append(new_post)\r\n\r\n    return Post(**new_post)\r\n\r\n\r\n# изменение поста по заданному id\r\n@app.put(\"/post/update/{id}\")\r\nasync def update_post(post: PostUpdate, id: int) -> Post:\r\n    for el in posts:\r\n        if el[\"id\"] == id:\r\n            # создаем новый пост и перезаписываем его в списке\r\n            updated_post = {\"id\": id, \"title\": post.title, \"body\": post.body, \"author\": el[\"author\"]}\r\n            posts[posts.index(el)] = updated_post\r\n            return Post(**updated_post)\r\n    raise HTTPException(status_code=404, detail=\"Post not found\")\r\n\r\n\r\n@app.delete(\"/post/delete/{id}\")\r\nasync def delete_post(id: int) -> List:\r\n    for el in posts:\r\n        if el[\"id\"] == id:\r\n            del el\r\n            return posts\r\n    raise HTTPException(status_code=404, detail=\"Post not found\")\r\n\r\n\r\n# if __name__ == \"__main__\":\r\n#     uvicorn.run(\"main:app\")
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app.py b/src/app.py
+--- a/src/app.py	(revision a85590397e65e2dd35f7ecf4dde6f6cf6439e10b)
++++ b/src/app.py	(date 1731428909186)
+@@ -1,8 +1,17 @@
+ import uvicorn
++
++from logging import getLogger, basicConfig, DEBUG
++
+ from fastapi import FastAPI, HTTPException
+ from pydantic import BaseModel
+ from typing import List
+ 
++
++logger = getLogger()
++FORMAT = "%(asctime)s : %(name)s : %(levelname)s : %(message)s"
++basicConfig(level=DEBUG, format=FORMAT)
++
++
+ app = FastAPI()
+ 
+ 
+@@ -47,6 +56,7 @@
+ # выводит список постов
+ @app.get("/posts", response_model=List[Post])
+ def get_posts() -> List[Post]:
++    logger.debug("Post list requested")
+     post_objects = []
+     for post in posts:
+         # каждый элемент в списке точно соответствует структуре класса Post
