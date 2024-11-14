@@ -19,7 +19,6 @@ app = FastAPI(title=settings.app_name)
 logger = logging.getLogger(__name__)
 
 
-
 # выводит список постов
 @app.get("/posts", response_model=List[Post])
 async def get_posts() -> List[Post]:
