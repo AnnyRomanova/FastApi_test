@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b08eed2-a73f-4726-8853-514514a44333" name="Changes" comment="add .idea to .gitignore&#10;&#10;again...">
-      <change beforePath="$PROJECT_DIR$/src/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
+    <list default="true" id="1b08eed2-a73f-4726-8853-514514a44333" name="Changes" comment="Add settings&#10;Update gitignore, README">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -270,7 +270,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731520090003</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="corrected path to dir idea in .gitignore">
+      <option name="closed" value="true" />
+      <created>1731520575179</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731520575179</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Add settings&#10;Update gitignore, README">
+      <option name="closed" value="true" />
+      <created>1731591832033</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1731591832033</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -278,7 +294,13 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -288,6 +310,8 @@
     <MESSAGE value="added file README.md" />
     <MESSAGE value="added logging" />
     <MESSAGE value="add .idea to .gitignore&#10;&#10;again..." />
-    <option name="LAST_COMMIT_MESSAGE" value="add .idea to .gitignore&#10;&#10;again..." />
+    <MESSAGE value="corrected path to dir idea in .gitignore" />
+    <MESSAGE value="Add settings&#10;Update gitignore, README" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add settings&#10;Update gitignore, README" />
   </component>
 </project>

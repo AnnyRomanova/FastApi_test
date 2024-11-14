@@ -8,14 +8,16 @@ from typing import List
 
 from schemas.database import posts, users
 from schemas.model import Post, PostCreate, PostUpdate
+from src.core.settings import settings
 
 # импортируем из YAML-файла настройки для логирования
 with open("src/core/logging.yaml", "r") as f:
     config = yaml.safe_load(f)
     logging.config.dictConfig(config)
 
-app = FastAPI()
+app = FastAPI(title=settings.app_name)
 logger = logging.getLogger(__name__)
+
 
 
 # выводит список постов

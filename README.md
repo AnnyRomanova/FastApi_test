@@ -1,5 +1,8 @@
 # FastApi - Учебный проект
 
 ## Установка:
-`pip install -r my_requirements.txt`
+### 1. `pip install -r my_requirements.txt`
 
+
+### 2. Необходимо создать файл .env c содержимым:
+####   `APP_NAME=Magazine articles`
