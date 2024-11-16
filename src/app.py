@@ -10,10 +10,6 @@ from schemas.database import posts, users
 from schemas.model import Post, PostCreate, PostUpdate
 from src.core.settings import settings
 
-# импортируем из YAML-файла настройки для логирования
-with open("src/core/logging.yaml", "r") as f:
-    config = yaml.safe_load(f)
-    logging.config.dictConfig(config)
 
 app = FastAPI(title=settings.app_name)
 logger = logging.getLogger(__name__)
@@ -91,4 +87,4 @@ async def delete_post(id: int) -> List:
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", port=8080)
+    uvicorn.run("app:app", port=8000, log_config="src/core/logging.yaml")

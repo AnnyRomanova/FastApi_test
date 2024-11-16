@@ -1,4 +1,5 @@
 version: 1
+disable_existing_loggers: False
 formatters:
   default:
     format: "[%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)d] - %(message)s"
@@ -7,18 +8,7 @@ handlers:
     class: logging.StreamHandler
     level: DEBUG
     formatter: default
-loggers:
-  uvicorn:
-    level: INFO
-  uvicorn.error:
-    level: ERROR
-  uvicorn.access:
-    level: INFO
-    handlers: [console]
-  __main__:
-    level: DEBUG
-    handlers: [console]
-    propagate: false
+    stream: ext://sys.stdout
 root:
   level: DEBUG
   handlers: [console]
