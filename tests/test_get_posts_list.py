@@ -1,4 +1,5 @@
-from app import app, users
+from app import app
+from models.database import users
 from fastapi.testclient import TestClient
 import pytest
 

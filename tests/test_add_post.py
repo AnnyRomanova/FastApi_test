@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
-from app import app, users, posts
+from app import app
+from models.database import posts, users
 import pytest
 
 
