@@ -7,7 +7,6 @@ from models.database import users
 client = TestClient(app)
 
 
-@pytest.mark.order(2)
 # декоратор позволяет подставлять в функцию различные входные и получаемые данные
 @pytest.mark.parametrize("post_id, expected_result",
                          [(1, {"id": 1, "title": "title_1", "body": "body_1", "author": users[1]}),
@@ -19,7 +18,6 @@ def test_post_for_id_200(post_id, expected_result):
     assert response.json() == expected_result
 
 
-@pytest.mark.order(3)
 def test_post_for_id_404():
     response = client.get("/posts/-1")
     assert response.status_code == 404

@@ -1,7 +1,6 @@
 from app import app
 from models.database import users
 from fastapi.testclient import TestClient
-import pytest
 
 
 # эмулято http-запросов
@@ -9,7 +8,6 @@ import pytest
 client = TestClient(app)
 
 
-@pytest.mark.order(1)
 def test_get_posts():
     response = client.get("/posts")
     assert response.status_code == 200
