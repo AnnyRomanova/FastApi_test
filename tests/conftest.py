@@ -14,5 +14,5 @@ def post_controller() -> post_module.PostController:
 
 # кладем бд в фикстуру, сможем использовать ее в тестах
 @pytest.fixture
-def post_db(post_controller: post_module.PostController) -> list[Post]:
+def post_db(post_controller: post_module.PostController) -> dict[int: Post]:
     return post_controller.post_db

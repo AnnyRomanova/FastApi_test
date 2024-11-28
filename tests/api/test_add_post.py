@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from app import app
-from models.database import posts, users
+from models.database import posts
 from schemas.model import Post
 
 client = TestClient(app)
@@ -17,7 +17,7 @@ def test_create_post_201(post_db: list[Post]):
     assert response.json() == {"id": new_post_id,
                                "title": "new_test_title",
                                "body": "new_test_body",
-                               "author": users[0]}
+                               "author_id": 1}
 
 
 def test_create_post_404():

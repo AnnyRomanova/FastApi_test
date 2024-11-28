@@ -2,77 +2,62 @@ import logging
 
 from fastapi import HTTPException
 
-from models.database import users
-from schemas.model import Post, PostCreate, PostUpdate
+from schemas.model import Post, PostCreate
 
 logger = logging.getLogger(__name__)
 
 
 class PostController:
 
-    def __init__(self, post_db: list) -> None:
+    def __init__(self, post_db: dict) -> None:
         self.post_db = post_db
 
     def get_posts_list(self) -> list[Post]:
         logger.info("Post`s list requested")
-        post_objects = []
-        for post in self.post_db:
-            # каждый элемент в списке точно соответствует структуре класса Post
-            post_objects.append(Post(id=post["id"], title=post["title"], body=post["body"], author=post["author"]))
-        logger.info("Post`s list responsed")
-        return post_objects
+        return list(self.post_db.values())
 
     def get_post(self, post_id: int) -> Post:
         logger.info("Post from post`s list requested")
-        if post_id == 0:
-            raise ValueError("Cannot get post with id 0")
-        for post in self.post_db:
-            if post["id"] == post_id:
-                # конвертируем пост в объект Post
-                logger.info("Post from post`s list responsed")
-                return Post(**post)
-        logger.error("Post not found")
-        raise HTTPException(status_code=404, detail="Post not found")
+        if post_id not in self.post_db:
+            logger.error("Post not found")
+            raise HTTPException(status_code=404, detail="Post not found")
+        return self.post_db.get(post_id)
 
     def add_post(self, new_post: PostCreate) -> Post:
         logger.info("Request to add new post")
-        # поиск автора до первого совпадения id
-        author = next((user for user in users if user["id"] == new_post.author_id), None)
-        # если автор не найден, вызываем ошибку
-        if not author:
-            logger.error("User not found")
+        user_not_found = True
+        for post in self.post_db.values():
+            if new_post.author_id == post.author_id:
+                user_not_found = False
+        if user_not_found:
             raise HTTPException(status_code=404, detail="User not found")
-        # если автор найден, создаем новый пост
-        new_post_id = len(self.post_db) + 1
+        else:
+            next_id = max(self.post_db.keys()) + 1
+            post = Post(id=next_id, **new_post.model_dump())
+            self.post_db[post.id] = post
+            logger.info("New post added")
+            return post
 
-        new_post = {"id": new_post_id, "title": new_post.title, "body": new_post.body, "author": author}
-        self.post_db.append(new_post)
-        logger.info("New post added")
-        return Post(**new_post)
-
-    def update_post(self, post: PostUpdate, post_id: int) -> Post:
+    def update_post(self, post: Post, post_id: int) -> Post:
         logger.info("Request to update post")
-        for el in self.post_db:
-            if el["id"] == post_id:
-                # создаем новый пост и перезаписываем его в списке
-                updated_post = {"id": post_id, "title": post.title, "body": post.body, "author": el["author"]}
-                self.post_db[self.post_db.index(el)] = updated_post
-                logger.info("Post updated")
-                return Post(**updated_post)
-        logger.error("Post not found")
-        raise HTTPException(status_code=404, detail="Post not found")
+        post_not_found = True
+        for el in self.post_db.values():
+            if el.id == post_id:
+                post_not_found = False
+        if post_not_found:
+            raise HTTPException(status_code=404, detail="Post not found")
+        else:
+            updated_post = Post(id=post_id, title=post.title, body=post.body, author_id=post.author_id)
+            self.post_db[post_id] = updated_post
+            logger.info("Post updated")
+            return updated_post
 
     def delete_post(self, post_id: int) -> None:
         logger.info("Request to delete post")
-        post_not_found = True
-        for post in self.post_db:
-            if post["id"] == post_id:
-                del post
-                post_not_found = False
-                logger.info("Post deleted")
-        if post_not_found:
-            logger.error("Post not found")
+        if post_id not in self.post_db:
             raise HTTPException(status_code=404, detail="Post not found")
+        self.post_db.pop(post_id)
+        logger.info("Post deleted")
 
 
 controller: PostController | None = None

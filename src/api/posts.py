@@ -1,9 +1,9 @@
 import logging
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, Depends
 
 from controllers.post_controller import get_post_controller, PostController
-from schemas.model import Post, PostCreate, PostUpdate
+from schemas.model import Post, PostCreate
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ async def create_post(new_post: PostCreate, controller: PostController = Depends
 
 
 @router.put("/{post_id}", response_model=Post, status_code=202)
-async def update_post(post: PostUpdate, post_id: int, controller: PostController = Depends(get_post_controller)) -> Post:
+async def update_post(post: Post, post_id: int, controller: PostController = Depends(get_post_controller)) -> Post:
     return controller.update_post(post, post_id)
 
 
