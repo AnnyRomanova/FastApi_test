@@ -1,14 +1,9 @@
-from app import app
-from fastapi.testclient import TestClient
+import pytest
 
 
-# эмулято http-запросов
-# позволяет делать запросы к API напрямую
-client = TestClient(app)
-
-
-def test_get_posts():
-    response = client.get("/posts")
+@pytest.mark.asyncio
+async def test_get_posts(async_client):
+    response = await async_client.get("/posts/")
     assert response.status_code == 200
     assert response.json() == [
          {"id": 1, "title": "title_1", "body": "body_1", "author_id": 1},
