@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: FAT_project
+    build: .
+    volumes:
+      - ./src:/code
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env
