@@ -6,6 +6,8 @@
 
 ### 2. Необходимо создать файл .env c содержимым:
 ####   `APP_NAME=Magazine articles`
+####   `POSTGRES_DB_USER=Anna`
+####   `POSTGRES_DB_PASSWORD=12345`
 
 
 ### 3. Для запуска в Docker
