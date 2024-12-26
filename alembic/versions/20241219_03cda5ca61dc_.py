@@ -8,8 +8,7 @@ Create Date: 2024-12-19 21:29:32.954036
 from typing import Sequence, Union
 
 from alembic import op
-import sqlalchemy as sa
-from src.models import Post
+from db.models import Post
 from sqlalchemy.orm import Session
 
 

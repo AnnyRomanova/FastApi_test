@@ -6,6 +6,10 @@ class PostCreate(BaseModel):
     body: str
     author_id: int
 
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class Post(PostCreate):
     id: int
