@@ -6,6 +6,8 @@ from controllers.post_controller import get_post_controller, PostController
 from schemas.model import Post, PostCreate
 from schemas.model import Post
 
+#todo переименовать файл на controller
+
 router = APIRouter()
 logger = logging.getLogger(__name__)
 

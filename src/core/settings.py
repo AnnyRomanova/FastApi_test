@@ -3,15 +3,15 @@ from pydantic_settings import BaseSettings
 
 # класс для определения параметров подключения к бд
 class DatabaseConfig(BaseSettings):
-    POSTGRES_HOST: str
-    POSTGRES_PORT: int
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    HOST: str
+    PORT: int
+    USER: str
+    PASSWORD: str
+    DB: str
 
 # метод возвращает строку подключения
     def make_url(self, driver: str) -> str:
-        return f"{driver}://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        return f"{driver}://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB}"
 
 # для ассинхронных запросов: asyncpg вместо psycopg2
     @property
@@ -29,9 +29,10 @@ class Settings(BaseSettings):
     DB: DatabaseConfig
 
     class Config:
+        case_sensitive = True
+        env_nested_delimiter = "__"
         env_file = ".env"  # Путь к файлу .env
-        env_file_encoding = "utf-8"
 
 
 def get_settings() -> Settings:
-    return Settings(DB=DatabaseConfig())
+    return Settings()

@@ -10,7 +10,7 @@ import db.models as post_DB
 
 logger = logging.getLogger(__name__)
 
-
+#todo переименовать файл на CRUD
 class PostController:
 
     def __init__(self, post_db: DatabaseConnector) -> None:

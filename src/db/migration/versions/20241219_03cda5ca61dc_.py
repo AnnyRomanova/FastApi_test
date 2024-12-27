@@ -8,13 +8,13 @@ Create Date: 2024-12-19 21:29:32.954036
 from typing import Sequence, Union
 
 from alembic import op
-from db.models import Post
+from src.db.models import Post
 from sqlalchemy.orm import Session
 
 
 # revision identifiers, used by Alembic.
 revision: str = '03cda5ca61dc'
-down_revision: Union[str, None] = 'd21a68c2385f'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
