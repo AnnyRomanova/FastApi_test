@@ -7,15 +7,14 @@ from db.connector import DatabaseConnector
 import schemas.model as post_pydentic
 import db.models as post_DB
 
-
 logger = logging.getLogger(__name__)
 
-#todo переименовать файл на CRUD
+
+# todo переименовать файл на CRUD
 class PostController:
 
     def __init__(self, post_db: DatabaseConnector) -> None:
         self.post_db = post_db
-
 
     async def get_posts_list(self) -> list[post_pydentic.Post]:
         async with self.post_db.session_maker() as session:
@@ -24,8 +23,6 @@ class PostController:
             posts = cursor.scalars().all()
             # Конвертируем объекты базы данных в Pydantic-модели
             return [post_pydentic.Post.model_validate(post) for post in posts]
-
-
 
     async def get_post(self, post_id: int) -> post_pydentic.Post:
         logger.info("Post by id requested")
@@ -39,7 +36,6 @@ class PostController:
 
             return post_pydentic.Post.model_validate(post)
 
-
     async def add_post(self, post_data: post_pydentic.PostCreate) -> post_pydentic.Post:
         logger.info("Request to add new post")
         async with self.post_db.session_maker() as session:
@@ -50,7 +46,6 @@ class PostController:
             await session.refresh(new_post)  # Обновляем объект для получения автогенерированных данных (id)
 
             return post_pydentic.Post(**new_post.__dict__)  # Преобразуем в Pydantic-модель
-
 
     async def update_post(self, post: post_pydentic.Post, post_id: int) -> post_pydentic.Post:
         logger.info("Request to update post")
@@ -73,7 +68,6 @@ class PostController:
 
             # Преобразуем объект базы данных обратно в Pydantic-модель
             return post_pydentic.Post(**existing_post.__dict__)
-
 
     async def delete_post(self, post_id: int) -> None:
         logger.info("Request to delete post")

@@ -1,11 +1,8 @@
 from logging.config import fileConfig
-
 from sqlalchemy import create_engine
 from alembic import context
 from src.core.settings import get_settings
 from src.db.models import Base
-
-# config.set_main_option("sqlalchemy.url", "postgresql+psycopg2://Anny:123456@localhost:5431/FAT_db4")
 
 settings = get_settings()
 target_metadata = Base.metadata
@@ -13,7 +10,7 @@ config = context.config
 
 
 def run_migrations_online() -> None:
-    url = config.get_main_option("sqlalchemy.url") or settings.postgresql_url
+    url = config.get_main_option("sqlalchemy.url") or settings.DB.postgresql_url
     connectable = create_engine(url)
     with connectable.connect() as connection:
         context.configure(
