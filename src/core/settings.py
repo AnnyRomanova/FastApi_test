@@ -9,16 +9,16 @@ class DatabaseConfig(BaseSettings):
     PASSWORD: str
     DB: str
 
-# метод возвращает строку подключения
+    # метод возвращает строку подключения
     def make_url(self, driver: str) -> str:
         return f"{driver}://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB}"
 
-# для ассинхронных запросов: asyncpg вместо psycopg2
+    # для ассинхронных запросов: asyncpg вместо psycopg2
     @property
     def asyncpg_url(self) -> str:
         return self.make_url(driver="postgresql+asyncpg")
 
-# для синхронного подключения
+    # для синхронного подключения
     @property
     def postgresql_url(self) -> str:
         return self.make_url(driver="postgresql")
@@ -31,7 +31,6 @@ class Settings(BaseSettings):
     class Config:
         case_sensitive = True
         env_nested_delimiter = "__"
-        env_file = ".env"  # Путь к файлу .env
 
 
 def get_settings() -> Settings:
