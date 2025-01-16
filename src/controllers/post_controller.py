@@ -23,21 +23,19 @@ class PostController:
             stmt = select(post_DB.Post).options(joinedload(post_DB.Post.author))  # Используем модель базы данных
             cursor = await session.execute(stmt)
             posts = cursor.scalars().all()
-            # Конвертируем объекты базы данных в словари и создаём Pydantic модели
+            # Конвертируем объекты базы данных в Pydantic модели
             posts_list = []
             for post in posts:
-                post_data = {
-                    "id": post.id,
-                    "title": post.title,
-                    "short_body": post.short_body,
-                    "author": {
-                        "id": post.author.id,
-                        "name": post.author.name,
-                        "age": post.author.age,
-                    }
-                }
-                posts_list.append(post_pydentic.PostOUT(**post_data))
-
+                posts_list.append(post_pydentic.PostOUT(
+                    id=post.id,
+                    title=post.title,
+                    short_body=post.short_body,
+                    author=post_pydentic.Author(
+                        id=post.author.id,
+                        name=post.author.name,
+                        age=post.author.age
+                    )
+                ))
             return posts_list
 
     async def get_post(self, post_id: UUID) -> post_pydentic.PostDetail:
@@ -51,21 +49,17 @@ class PostController:
             if not post:
                 raise HTTPException(status_code=404, detail="Пост не найден")
 
-            # Явное преобразование объекта ORM в словарь
-            post_data = {
-                "id": post.id,
-                "title": post.title,
-                "body": post.body,
-                "author": {
-                    "id": post.author.id,
-                    "name": post.author.name,
-                    "age": post.author.age,
-                }
-            }
-            # Передаём словарь в Pydantic модель
-            return post_pydentic.PostDetail(**post_data)
+            # Преобразуем в Pydantic модель
+            return post_pydentic.PostDetail(
+                id=post.id,
+                title=post.title,
+                body=post.body,
+                author=post_pydentic.Author(
+                    id=post.author.id,
+                    name=post.author.name,
+                    age=post.author.age))
 
-    async def add_post(self, post_data: post_pydentic.PostCreate) -> None:
+    async def add_post(self, post_data: post_pydentic.PostCreate) -> post_pydentic.PostDetail:
         logger.info("Request to add new post")
         async with self.post_db.session_maker() as session:
             # Проверяем существование автора
@@ -75,19 +69,30 @@ class PostController:
 
             if not author:
                 logger.error(f"Author with id {post_data.author_id} does not exist.")
-                raise HTTPException(status_code=500, detail=f"Автор с id {post_data.author_id} не найден.")
+                raise HTTPException(status_code=400, detail=f"Автор с id {post_data.author_id} не найден.")
 
             # Создаем экземпляр модели базы данных
             new_post = post_DB.Post(**post_data.model_dump())
             session.add(new_post)
 
             await session.commit()
-            await session.refresh(new_post)
+
+            post_list = await self.get_posts_list()
+            last_post = post_list[-1]
+            post_id = last_post.id
+            updated_post = await self.get_post(post_id)
+
+            return post_pydentic.PostDetail(
+                id=updated_post.id,
+                title=updated_post.title,
+                body=updated_post.body,
+                author=updated_post.author)
 
     async def update_post(self, post: post_pydentic.PostUpdate, post_id: UUID) -> post_pydentic.PostOUT:
         logger.info("Request to update post")
         async with self.post_db.session_maker() as session:
-            stmt = select(post_DB.Post).where(post_DB.Post.id == post_id)  # Ищем пост по ID
+            stmt = select(post_DB.Post).where(post_DB.Post.id == post_id).options(
+                joinedload(post_DB.Post.author))  # Ищем пост по ID + загружаем автора
             cursor = await session.execute(stmt)
             existing_post = cursor.scalar_one_or_none()  # Получаем объект поста или None
 
@@ -95,30 +100,21 @@ class PostController:
                 raise HTTPException(status_code=404, detail="Пост не найден")
 
             # Обновляем поля поста
-            for key, value in post.model_dump().items():
-                setattr(existing_post, key, value)
+            existing_post.title = post.title
+            existing_post.short_body = post.short_body
+            existing_post.body = post.body
 
             # Сохраняем изменения
             session.add(existing_post)
             await session.commit()
             await session.refresh(existing_post)  # Обновляем объект из базы данных
 
-            # Загрузка автора
-            author = await session.get(post_DB.Author, existing_post.author_id)
-            if not author:
-                raise HTTPException(status_code=404, detail="Автор не найден")
-
-            # Преобразуем объект базы данных в словарь
-            post_dict = existing_post.__dict__
-
-            # Убираем ненужный атрибут
-            post_dict.pop('_sa_instance_state', None)
-
-            # Добавляем автора в данные поста
-            post_dict['author'] = post_pydentic.Author.model_validate(author)  # Используем модель Pydantic для автора
-
             # Преобразуем в Pydantic модель и возвращаем
-            return post_pydentic.PostOUT(**post_dict)
+            return post_pydentic.PostOUT(id=existing_post.id,
+                                         title=existing_post.title,
+                                         short_body=existing_post.short_body,
+                                         author=existing_post.author
+                                         )
 
     async def delete_post(self, post_id: UUID) -> None:
         logger.info("Request to delete post")

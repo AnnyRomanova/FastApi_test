@@ -24,9 +24,10 @@ async def get_post(post_id: UUID, controller: PostController = Depends(get_post_
     return post
 
 
-@router.post("/", status_code=201)
-async def create_post(new_post: PostCreate, controller: PostController = Depends(get_post_controller)) -> None:
-    await controller.add_post(new_post)
+@router.post("/", status_code=201, response_model=PostDetail)
+async def create_post(new_post: PostCreate, controller: PostController = Depends(get_post_controller)) -> PostDetail:
+    post = await controller.add_post(new_post)
+    return post
 
 
 @router.put("/{post_id}", response_model=PostOUT, status_code=202)

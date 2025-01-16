@@ -53,3 +53,7 @@ class PostUpdate(BaseModel):
     title: str
     short_body: str
     body: str
+
+    model_config = {
+        "from_attributes": True
+    }
