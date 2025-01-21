@@ -12,7 +12,7 @@ Base = declarative_base()
 
 class Author(Base):
     __tablename__ = 'authors'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
@@ -23,7 +23,7 @@ class Author(Base):
 
 class Post(Base):
     __tablename__ = 'posts'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, nullable=False)
     short_body = Column(String, nullable=False)
     body = Column(String, nullable=False)

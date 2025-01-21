@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -12,7 +13,6 @@ import db.models as post_DB
 logger = logging.getLogger(__name__)
 
 
-# todo переименовать файл на CRUD
 class PostController:
 
     def __init__(self, post_db: DatabaseConnector) -> None:
@@ -61,6 +61,7 @@ class PostController:
 
     async def add_post(self, post_data: post_pydentic.PostCreate) -> post_pydentic.PostDetail:
         logger.info("Request to add new post")
+        post_id = uuid.uuid4()
         async with self.post_db.session_maker() as session:
             # Проверяем существование автора
             stmt = select(post_DB.Author).where(post_DB.Author.id == post_data.author_id)
@@ -72,21 +73,12 @@ class PostController:
                 raise HTTPException(status_code=400, detail=f"Автор с id {post_data.author_id} не найден.")
 
             # Создаем экземпляр модели базы данных
-            new_post = post_DB.Post(**post_data.model_dump())
+            new_post = post_DB.Post(id=post_id, **post_data.model_dump())
             session.add(new_post)
 
             await session.commit()
 
-            post_list = await self.get_posts_list()
-            last_post = post_list[-1]
-            post_id = last_post.id
-            updated_post = await self.get_post(post_id)
-
-            return post_pydentic.PostDetail(
-                id=updated_post.id,
-                title=updated_post.title,
-                body=updated_post.body,
-                author=updated_post.author)
+            return await self.get_post(post_id)
 
     async def update_post(self, post: post_pydentic.PostUpdate, post_id: UUID) -> post_pydentic.PostOUT:
         logger.info("Request to update post")
