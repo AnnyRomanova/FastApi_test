@@ -6,7 +6,7 @@ import pytest_asyncio
 # записываем файл post_controller в переменную post_module
 import controllers.post_controller as post_module
 from app import app
-from models.database import posts
+from db.models import posts
 from schemas.model import Post
 
 
