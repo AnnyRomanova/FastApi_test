@@ -1,13 +1,22 @@
 import pytest
 
+from db.models import Post, Author
+
 
 @pytest.mark.asyncio
-async def test_get_posts(async_client):
+@pytest.mark.usefixtures("prepare_post")
+async def test_get_posts(async_client, post: Post, author: Author):
     response = await async_client.get("/posts/")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.text
     assert response.json() == [
-         {"id": 1, "title": "title_1", "body": "body_1", "author_id": 1},
-         {"id": 2, "title": "title_2", "body": "body_2", "author_id": 2},
-         {"id": 3, "title": "title_3", "body": "body_3", "author_id": 3}
+        {
+            "id": str(post.id),
+            "title": post.title,
+            "short_body": post.short_body,
+            "author": {
+                "id": str(author.id),
+                "name": author.name,
+                "age": author.age,
+            }
+        }
     ]
-

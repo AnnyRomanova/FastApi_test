@@ -2,25 +2,29 @@ import pytest
 from httpx import AsyncClient
 import pytest_asyncio
 
-
 # записываем файл post_controller в переменную post_module
 import controllers.post_controller as post_module
 from app import app
-from db.models import posts
-from schemas.model import Post
+from core.settings import Settings, get_settings
+from db.connector import DatabaseConnector
+
+pytest_plugins = [
+    "fixtures.test_db",
+    "fixtures.prepare_post",
+    "fixtures.prepare_author",
+]
+
+
+@pytest.fixture(scope="session")
+def settings() -> Settings:
+    return get_settings()
 
 
 # создаем фикстуру с копией бд, которая будет обнуляться перед каждым тестом
 @pytest.fixture(autouse=True)
-def post_controller() -> post_module.PostController:
-    post_module.controller = post_module.PostController(posts.copy())
+def post_controller(post_db: DatabaseConnector) -> post_module.PostController:
+    post_module.controller = post_module.PostController(post_db)
     yield post_module.controller
-
-
-# кладем бд в фикстуру, сможем использовать ее в тестах
-@pytest.fixture
-def post_db(post_controller: post_module.PostController) -> dict[int: Post]:
-    return post_controller.post_db
 
 
 # создаем фикстуру с клиентом
