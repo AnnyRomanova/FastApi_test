@@ -18,8 +18,9 @@ async def get_post_list(
         offset: int = Query(0, ge=0),  # offset: минимум 0, по умолчанию 0
         search: str | None = Query(None, min_length=1),  # По умолчанию None, минимальная длина строки — 1 символ
         order_by: str = Query("created_at", regex="^(created_at|id|body)$"),  # order_by: только созданные поля
+        descending: bool = Query(False),  # descending: False (по умолчанию), сортировка по возрастанию
         controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
-    posts = await controller.get_posts_list(limit=limit, offset=offset, search=search, order_by=order_by)
+    posts = await controller.get_posts_list(limit=limit, offset=offset, search=search, order_by=order_by, descending=descending)
     return posts
 
 

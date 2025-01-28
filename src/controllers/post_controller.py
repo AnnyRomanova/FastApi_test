@@ -23,7 +23,8 @@ class PostController:
             limit: int = 20,
             offset: int = 0,
             search: str = None,
-            order_by: str = "created_at"
+            order_by: str = "created_at",
+            descending: bool = False
     ) -> list[post_pydentic.PostOUT]:
         # Проверяем границы параметров limit и offset
         limit = max(5, min(limit, 100))  # границы параметра limit
@@ -46,9 +47,12 @@ class PostController:
                 )
                 stmt = stmt.where(search_filter)
 
-            # Добавляем сортировку
+            # Добавляем сортировку, по возрастанию или убыванию
             order_column = getattr(post_DB.Post, order_by)
-            stmt = stmt.order_by(order_column)
+            if descending:
+                stmt = stmt.order_by(order_column.desc())
+            else:
+                stmt = stmt.order_by(order_column.asc())
 
             # Добавляем limit и offset
             stmt = stmt.limit(limit).offset(offset)
