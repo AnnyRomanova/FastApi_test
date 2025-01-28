@@ -18,10 +18,16 @@ class PostController:
     def __init__(self, post_db: DatabaseConnector) -> None:
         self.post_db = post_db
 
-    async def get_posts_list(self, limit: int = 20) -> list[post_pydentic.PostOUT]:
-        limit = max(5, min(limit, 100))  # раницы параметра limit
+    async def get_posts_list(self, limit: int = 20, offset: int = 0) -> list[post_pydentic.PostOUT]:
+        limit = max(5, min(limit, 100))  # границы параметра limit
+        offset = max(0, offset) # с какого элемента начинать выборку данных
         async with self.post_db.session_maker() as session:
-            stmt = select(post_DB.Post).options(joinedload(post_DB.Post.author)).limit(limit)  # Используем модель базы данных и устанавливаем лимит
+            stmt = (
+                select(post_DB.Post)
+                .options(joinedload(post_DB.Post.author))  # Используем модель базы данных
+                .limit(limit) # устанавливаем лимит записей
+                .offset(offset)  # Пропускаем указанное количество записей
+            )
             cursor = await session.execute(stmt)
             posts = cursor.scalars().all()
             # Конвертируем объекты базы данных в Pydantic модели

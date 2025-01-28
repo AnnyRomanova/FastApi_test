@@ -13,8 +13,11 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=list[PostOUT])
-async def get_post_list(limit: int = Query(20, ge=5, le=100), controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
-    posts = await controller.get_posts_list(limit=limit)
+async def get_post_list(
+        limit: int = Query(20, ge=5, le=100), # limit: от 5 до 100, по умолчанию 20
+        offset: int = Query(0, ge=0),  # offset: минимум 0, по умолчанию 0
+        controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
+    posts = await controller.get_posts_list(limit=limit, offset=offset)
     return posts
 
 
