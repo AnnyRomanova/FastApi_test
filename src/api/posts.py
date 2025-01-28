@@ -1,7 +1,7 @@
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from controllers.post_controller import get_post_controller, PostController
 from schemas.model import PostOUT, PostDetail, PostCreate, PostUpdate
@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=list[PostOUT])
-async def get_post_list(controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
-    posts = await controller.get_posts_list()
+async def get_post_list(limit: int = Query(20, ge=5, le=100), controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
+    posts = await controller.get_posts_list(limit=limit)
     return posts
 
 
