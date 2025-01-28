@@ -1,15 +1,42 @@
 # FastApi - Учебный проект
 
 ## Установка:
-### 1. `pip install -r my_requirements.txt`
+### 1. `pip install -r requirements.txt`
 
 
 ### 2. Необходимо создать файл .env c содержимым:
-####   `APP_NAME=Magazine articles`
-####   `POSTGRES_USER=user`
-####   `POSTGRES_PASSWORD=password`
-####   `POSTGRES_DB=FAT_db`
+
+
+####   Postgres
+
+`POSTGRES_DB=FAT_db4`
+
+`POSTGRES_USER=user`
+
+`POSTGRES_PASSWORD=password`
+
+####  Service
+
+`APP_NAME=Magazine articles`
+
+`DB__HOST=localhost`
+
+`DB__PORT=5431`
+
+`DB__USER=user`
+
+`DB__PASSWORD=password`
+
+`DB__DB=FAT_db4`
+
 
 
 ### 3. Для запуска в Docker
-#### `docker run --rm --env APP_NAME='Magazine articles' --name mycontainer -p 8000:8000 myimage`
+#### `docker-compose build`
+
+#### `docker-compose up -d`
+
+
+### 4. Для заполнения базы данных
+
+`alembic upgrade head`
