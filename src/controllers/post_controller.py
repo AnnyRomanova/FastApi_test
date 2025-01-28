@@ -2,7 +2,7 @@ import logging
 import uuid
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import joinedload
 from uuid import UUID
 
@@ -18,16 +18,26 @@ class PostController:
     def __init__(self, post_db: DatabaseConnector) -> None:
         self.post_db = post_db
 
-    async def get_posts_list(self, limit: int = 20, offset: int = 0) -> list[post_pydentic.PostOUT]:
+    async def get_posts_list(self, limit: int = 20, offset: int = 0, search: str = None) -> list[post_pydentic.PostOUT]:
+        # Проверяем границы параметров limit и offset
         limit = max(5, min(limit, 100))  # границы параметра limit
         offset = max(0, offset) # с какого элемента начинать выборку данных
+
         async with self.post_db.session_maker() as session:
-            stmt = (
-                select(post_DB.Post)
-                .options(joinedload(post_DB.Post.author))  # Используем модель базы данных
-                .limit(limit) # устанавливаем лимит записей
-                .offset(offset)  # Пропускаем указанное количество записей
-            )
+            # Формируем базовый запрос
+            stmt = select(post_DB.Post).options(joinedload(post_DB.Post.author))
+
+            # Если указан параметр search, добавляем фильтрацию
+            if search:
+                search_filter = or_( # or_ для поиска в нескольких колонках
+                    post_DB.Post.body.ilike(f"%{search}%"), # ilike позволяет выполнять поиск, игнорируя регистр букв
+                    post_DB.Post.short_body.ilike(f"%{search}%")
+                )
+                stmt = stmt.where(search_filter)
+
+            # Добавляем limit и offset
+            stmt = stmt.limit(limit).offset(offset)
+
             cursor = await session.execute(stmt)
             posts = cursor.scalars().all()
             # Конвертируем объекты базы данных в Pydantic модели
