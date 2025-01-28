@@ -18,10 +18,21 @@ class PostController:
     def __init__(self, post_db: DatabaseConnector) -> None:
         self.post_db = post_db
 
-    async def get_posts_list(self, limit: int = 20, offset: int = 0, search: str = None) -> list[post_pydentic.PostOUT]:
+    async def get_posts_list(
+            self,
+            limit: int = 20,
+            offset: int = 0,
+            search: str = None,
+            order_by: str = "created_at"
+    ) -> list[post_pydentic.PostOUT]:
         # Проверяем границы параметров limit и offset
         limit = max(5, min(limit, 100))  # границы параметра limit
         offset = max(0, offset) # с какого элемента начинать выборку данных
+
+        # Проверяем валидность параметра order_by
+        valid_order_fields = {"created_at", "id", "body"}
+        if order_by not in valid_order_fields:
+            raise ValueError(f"Invalid order_by field: {order_by}. Valid fields are: {valid_order_fields}")
 
         async with self.post_db.session_maker() as session:
             # Формируем базовый запрос
@@ -34,6 +45,10 @@ class PostController:
                     post_DB.Post.short_body.ilike(f"%{search}%")
                 )
                 stmt = stmt.where(search_filter)
+
+            # Добавляем сортировку
+            order_column = getattr(post_DB.Post, order_by)
+            stmt = stmt.order_by(order_column)
 
             # Добавляем limit и offset
             stmt = stmt.limit(limit).offset(offset)
