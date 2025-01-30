@@ -1,26 +1,47 @@
 import logging
+from enum import StrEnum
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
 
 from controllers.post_controller import get_post_controller, PostController
 from schemas.model import PostOUT, PostDetail, PostCreate, PostUpdate
-
-# todo переименовать файл на controller
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+# Определяем StrEnum для order_by
+class OrderBy(StrEnum):
+    CREATED_AT = "created_at"
+    ID = "id"
+    BODY = "body"
+
+
+# Модель фильтров
+class PostFilters(BaseModel):
+    limit: int = Query(20, ge=5, le=100)
+    offset: int = Query(0, ge=0)
+    search: Optional[str] = Query(None, min_length=1)
+    order_by: OrderBy = Query(OrderBy.CREATED_AT)
+    descending: bool = Query(False)
+
+
 @router.get("/", response_model=list[PostOUT])
 async def get_post_list(
-        limit: int = Query(20, ge=5, le=100), # limit: от 5 до 100, по умолчанию 20
-        offset: int = Query(0, ge=0),  # offset: минимум 0, по умолчанию 0
-        search: str | None = Query(None, min_length=1),  # По умолчанию None, минимальная длина строки — 1 символ
-        order_by: str = Query("created_at", regex="^(created_at|id|body)$"),  # order_by: только созданные поля
-        descending: bool = Query(False),  # descending: False (по умолчанию), сортировка по возрастанию
-        controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
-    posts = await controller.get_posts_list(limit=limit, offset=offset, search=search, order_by=order_by, descending=descending)
+        filters: PostFilters = Depends(),  # Передаём фильтры через Depends
+        controller: PostController = Depends(get_post_controller)
+) -> list[PostOUT]:
+    posts = await controller.get_posts_list(
+        limit=filters.limit,
+        offset=filters.offset,
+        search=filters.search,
+        order_by=filters.order_by.value,
+        descending=filters.descending
+    )
+
     return posts
 
 

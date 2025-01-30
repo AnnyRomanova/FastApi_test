@@ -26,14 +26,6 @@ class PostController:
             order_by: str = "created_at",
             descending: bool = False
     ) -> list[post_pydentic.PostOUT]:
-        # Проверяем границы параметров limit и offset
-        limit = max(5, min(limit, 100))  # границы параметра limit
-        offset = max(0, offset) # с какого элемента начинать выборку данных
-
-        # Проверяем валидность параметра order_by
-        valid_order_fields = {"created_at", "id", "body"}
-        if order_by not in valid_order_fields:
-            raise ValueError(f"Invalid order_by field: {order_by}. Valid fields are: {valid_order_fields}")
 
         async with self.post_db.session_maker() as session:
             # Формируем базовый запрос
