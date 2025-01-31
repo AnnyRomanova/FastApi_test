@@ -20,11 +20,7 @@ class PostController:
 
     async def get_posts_list(
             self,
-            limit: int = 20,
-            offset: int = 0,
-            search: str = None,
-            order_by: str = "created_at",
-            descending: bool = False
+            filters: post_pydentic.PostFilters
     ) -> list[post_pydentic.PostOUT]:
 
         async with self.post_db.session_maker() as session:
@@ -32,22 +28,22 @@ class PostController:
             stmt = select(post_DB.Post).options(joinedload(post_DB.Post.author))
 
             # Если указан параметр search, добавляем фильтрацию
-            if search:
+            if filters.search:
                 search_filter = or_( # or_ для поиска в нескольких колонках
-                    post_DB.Post.body.ilike(f"%{search}%"), # ilike позволяет выполнять поиск, игнорируя регистр букв
-                    post_DB.Post.short_body.ilike(f"%{search}%")
+                    post_DB.Post.body.ilike(f"%{filters.search}%"), # ilike позволяет выполнять поиск, игнорируя регистр букв
+                    post_DB.Post.short_body.ilike(f"%{filters.search}%")
                 )
                 stmt = stmt.where(search_filter)
 
             # Добавляем сортировку, по возрастанию или убыванию
-            order_column = getattr(post_DB.Post, order_by)
-            if descending:
+            order_column = getattr(post_DB.Post, filters.order_by)
+            if filters.descending:
                 stmt = stmt.order_by(order_column.desc())
             else:
                 stmt = stmt.order_by(order_column.asc())
 
             # Добавляем limit и offset
-            stmt = stmt.limit(limit).offset(offset)
+            stmt = stmt.limit(filters.limit).offset(filters.offset)
 
             cursor = await session.execute(stmt)
             posts = cursor.scalars().all()

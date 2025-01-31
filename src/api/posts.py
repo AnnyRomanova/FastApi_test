@@ -1,32 +1,13 @@
 import logging
-from enum import StrEnum
-from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends
 
 from controllers.post_controller import get_post_controller, PostController
-from schemas.model import PostOUT, PostDetail, PostCreate, PostUpdate
+from schemas.model import PostOUT, PostDetail, PostCreate, PostUpdate, PostFilters
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
-
-
-# Определяем StrEnum для order_by
-class OrderBy(StrEnum):
-    CREATED_AT = "created_at"
-    ID = "id"
-    BODY = "body"
-
-
-# Модель фильтров
-class PostFilters(BaseModel):
-    limit: int = Query(20, ge=5, le=100)
-    offset: int = Query(0, ge=0)
-    search: Optional[str] = Query(None, min_length=1)
-    order_by: OrderBy = Query(OrderBy.CREATED_AT)
-    descending: bool = Query(False)
 
 
 @router.get("/", response_model=list[PostOUT])
@@ -34,13 +15,7 @@ async def get_post_list(
         filters: PostFilters = Depends(),  # Передаём фильтры через Depends
         controller: PostController = Depends(get_post_controller)
 ) -> list[PostOUT]:
-    posts = await controller.get_posts_list(
-        limit=filters.limit,
-        offset=filters.offset,
-        search=filters.search,
-        order_by=filters.order_by.value,
-        descending=filters.descending
-    )
+    posts = await controller.get_posts_list(filters)
 
     return posts
 
