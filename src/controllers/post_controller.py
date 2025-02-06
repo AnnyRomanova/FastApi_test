@@ -2,7 +2,7 @@ import logging
 import uuid
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import joinedload
 from uuid import UUID
 
@@ -18,9 +18,33 @@ class PostController:
     def __init__(self, post_db: DatabaseConnector) -> None:
         self.post_db = post_db
 
-    async def get_posts_list(self) -> list[post_pydentic.PostOUT]:
+    async def get_posts_list(
+            self,
+            filters: post_pydentic.PostFilters
+    ) -> list[post_pydentic.PostOUT]:
+
         async with self.post_db.session_maker() as session:
-            stmt = select(post_DB.Post).options(joinedload(post_DB.Post.author))  # Используем модель базы данных
+            # Формируем базовый запрос
+            stmt = select(post_DB.Post).options(joinedload(post_DB.Post.author))
+
+            # Если указан параметр search, добавляем фильтрацию
+            if filters.search:
+                search_filter = or_( # or_ для поиска в нескольких колонках
+                    post_DB.Post.body.ilike(f"%{filters.search}%"), # ilike позволяет выполнять поиск, игнорируя регистр букв
+                    post_DB.Post.short_body.ilike(f"%{filters.search}%")
+                )
+                stmt = stmt.where(search_filter)
+
+            # Добавляем сортировку, по возрастанию или убыванию
+            order_column = getattr(post_DB.Post, filters.order_by)
+            if filters.descending:
+                stmt = stmt.order_by(order_column.desc())
+            else:
+                stmt = stmt.order_by(order_column.asc())
+
+            # Добавляем limit и offset
+            stmt = stmt.limit(filters.limit).offset(filters.offset)
+
             cursor = await session.execute(stmt)
             posts = cursor.scalars().all()
             # Конвертируем объекты базы данных в Pydantic модели

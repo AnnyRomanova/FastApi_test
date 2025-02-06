@@ -4,17 +4,19 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from controllers.post_controller import get_post_controller, PostController
-from schemas.model import PostOUT, PostDetail, PostCreate, PostUpdate
-
-# todo переименовать файл на controller
+from schemas.model import PostOUT, PostDetail, PostCreate, PostUpdate, PostFilters
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=list[PostOUT])
-async def get_post_list(controller: PostController = Depends(get_post_controller)) -> list[PostOUT]:
-    posts = await controller.get_posts_list()
+async def get_post_list(
+        filters: PostFilters = Depends(),  # Передаём фильтры через Depends
+        controller: PostController = Depends(get_post_controller)
+) -> list[PostOUT]:
+    posts = await controller.get_posts_list(filters)
+
     return posts
 
 

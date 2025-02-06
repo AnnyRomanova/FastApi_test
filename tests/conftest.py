@@ -11,6 +11,7 @@ from db.connector import DatabaseConnector
 pytest_plugins = [
     "fixtures.test_db",
     "fixtures.prepare_post",
+    "fixtures.prepare_posts",
     "fixtures.prepare_author",
 ]
 
